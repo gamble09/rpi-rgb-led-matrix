@@ -403,6 +403,7 @@ void Framebuffer::CopyFrom(const Framebuffer *other) {
 }
 
 void Framebuffer::DumpToMatrix(GPIO *io) {
+//	printf("-------------Start------------\n");
   const struct HardwareMapping &h = *hardware_mapping_;
   gpio_bits_t color_clk_mask = 0;  // Mask of bits while clocking in.
   color_clk_mask |= h.p0_r1 | h.p0_g1 | h.p0_b1 | h.p0_r2 | h.p0_g2 | h.p0_b2;
@@ -447,6 +448,8 @@ void Framebuffer::DumpToMatrix(GPIO *io) {
     row_address |= (d_row & 0x08) ? h.d : 0;
     row_address |= (d_row & 0x10) ? h.e : 0;
 
+    //printf("Address for Row Number: %d is %d\n", row_loop, row_address);
+
     // Rows can't be switched very quickly without ghosting, so we do the
     // full PWM of one row before switching rows.
     for (int b = kBitPlanes - pwm_to_show; b < kBitPlanes; ++b) {
@@ -472,6 +475,7 @@ void Framebuffer::DumpToMatrix(GPIO *io) {
       sOutputEnablePulser->SendPulse(b);
     }
   }
+  //printf("---------------------END--------------\n");
 }
 }  // namespace internal
 }  // namespace rgb_matrix

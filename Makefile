@@ -24,6 +24,12 @@ all : $(RGB_LIBRARY)
 $(RGB_LIBRARY): FORCE
 	$(MAKE) -C $(RGB_LIBDIR)
 
+test_pixel : test_pixel.o $(RGB_LIBRARY)
+		$(CXX) $(CXXFLAGS) test_pixel.o -o $@ $(LDFLAGS)
+
+test_pixel.o : pixel-test.cc
+		$(CXX) -I$(RGB_INCDIR) $(CXXFLAGS) -c -o $@ $<
+
 clean:
 	$(MAKE) -C lib clean
 	$(MAKE) -C utils clean

@@ -114,6 +114,19 @@ private:
   RotateTransformer rotated_;
 }  __attribute__((deprecated));
 
+class MyNewTransformer : public CanvasTransformer {
+public:
+  MyNewTransformer();
+  virtual ~MyNewTransformer();
+
+  virtual Canvas *Transform(Canvas *output);
+
+private:
+  class TransformCanvas;
+
+  TransformCanvas *const canvas_;
+};
+
 } // namespace rgb_matrix
 
 #endif // RPI_TRANSFORMER_H

@@ -228,4 +228,83 @@ LargeSquare64x64Transformer::LargeSquare64x64Transformer()
 Canvas *LargeSquare64x64Transformer::Transform(Canvas *output) {
   return rotated_.Transform(arrange_.Transform(output));
 }
+
+class MyNewTransformer::TransformCanvas : public Canvas {
+public:
+  TransformCanvas() : delegatee_(NULL) {}
+
+  void SetDelegatee(Canvas* delegatee);
+
+  virtual void Clear();
+  virtual void Fill(uint8_t red, uint8_t green, uint8_t blue);
+  virtual int width() const;
+  virtual int height() const;
+  virtual void SetPixel(int x, int y, uint8_t red, uint8_t green, uint8_t blue);
+
+private:
+  Canvas *delegatee_;
+};
+
+void MyNewTransformer::TransformCanvas::SetDelegatee(Canvas* delegatee) {
+  delegatee_ = delegatee;
+}
+
+void MyNewTransformer::TransformCanvas::Clear() {
+  delegatee_->Clear();
+}
+
+void MyNewTransformer::TransformCanvas::Fill(uint8_t red, uint8_t green, uint8_t blue) {
+  delegatee_->Fill(red, green, blue) /* add any necessary transform of color here */;
+}
+
+int MyNewTransformer::TransformCanvas::width() const {
+  return delegatee_->width()/2 /* add any necessary transform of width here */;
+}
+
+int MyNewTransformer::TransformCanvas::height() const {
+  return delegatee_->height()*2 /* add any necessary transform of height here */;
+}
+
+void MyNewTransformer::TransformCanvas::SetPixel(int x, int y, uint8_t red, uint8_t green, uint8_t blue) {
+  int odd8_block =(((y % 16) / 8) +1) % 2; //to know if the pixel is in an odd 8pixel row
+  int num_mod_x = (x / 64); //num of daisy chainned modules
+  int new_x = (x +  64*num_mod_x + 64*odd8_block); 
+  int new_y = (y % 8) + 8 *( y / 16);
+ 	
+  printf("Transformed (%d, %d) to (%d, %d)\n", x,y , new_x, new_y);
+  /*
+	int new_x = x;
+	int new_y = y;
+	if (0 <= x < 16 && 0 <= y < 8) {
+		new_x = x+16;
+	}
+	if (16 <= x < 32 && 0 <= y < 8) {
+		new_x = x+16;
+	}
+	if (0 <= x < 16 && 8 <= y < 16) {
+		new_x = x-32;
+		new_y = y-8;
+	}
+	if (16 <= x < 32 && 8 <= y < 16) {
+		new_x = x+0;
+		new_y = y-8;
+	} */
+	delegatee_->SetPixel(new_x, new_y, red, green, blue);
+}
+
+MyNewTransformer::MyNewTransformer()
+  : canvas_(new TransformCanvas()) {
+}
+
+MyNewTransformer::~MyNewTransformer() {
+  delete canvas_;
+}
+
+Canvas *MyNewTransformer::Transform(Canvas *output) {
+  assert(output != NULL);
+
+  canvas_->SetDelegatee(output);
+  return canvas_;
+}
+
 } // namespace rgb_matrix

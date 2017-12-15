@@ -181,7 +181,7 @@ RGBMatrix::RGBMatrix(GPIO *io, const Options &options)
   active_ = CreateFrameCanvas();
   Clear();
   SetGPIO(io, true);
-  // ApplyStaticTransformer(...);  // TODO: add 1:8 multiplex for outdoor panels
+  ApplyStaticTransformer(MyNewTransformer());  // TODO: add 1:8 multiplex for outdoor panels
 }
 
 RGBMatrix::RGBMatrix(GPIO *io, int rows, int chained_displays,
@@ -195,7 +195,7 @@ RGBMatrix::RGBMatrix(GPIO *io, int rows, int chained_displays,
   active_ = CreateFrameCanvas();
   Clear();
   SetGPIO(io, true);
-  // ApplyStaticTransformer(...);  // TODO: add 1:8 multiplex for outdoor panels
+  ApplyStaticTransformer(MyNewTransformer());  // TODO: add 1:8 multiplex for outdoor panels
 }
 
 RGBMatrix::~RGBMatrix() {
