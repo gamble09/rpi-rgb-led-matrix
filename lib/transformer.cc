@@ -266,12 +266,12 @@ int MyNewTransformer::TransformCanvas::height() const {
 }
 
 void MyNewTransformer::TransformCanvas::SetPixel(int x, int y, uint8_t red, uint8_t green, uint8_t blue) {
-  int major_panel = x / 32; // 32X32
+  int major_panel = y / 16; // 32X32
   int minor_panel = y/8 ; //8X32
-  int x_vertical_offset = (minor_panel % 2) * 32; // Offset only for Odd panel numbers
-  int x_horizontal_offset = major_panel * 64;
-  int new_x = (x%32) + x_horizontal_offset + x_vertical_offset;
-  int y_offset = (y/16) * 8;
+  int x_vertical_offset = ((minor_panel + 1) % 2) * 16; // Offset only for Odd panel numbers
+  int x_horizontal_offset = (x/16)*16;
+  int new_x = (x) + x_horizontal_offset + x_vertical_offset;
+  int y_offset = major_panel * 8;
   int new_y = (y % 8) + y_offset;
  	
   printf("Transformed (%d, %d) to (%d, %d)\n", x,y , new_x, new_y);
