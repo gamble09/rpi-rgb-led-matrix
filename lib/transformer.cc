@@ -266,33 +266,17 @@ int MyNewTransformer::TransformCanvas::height() const {
 }
 
 void MyNewTransformer::TransformCanvas::SetPixel(int x, int y, uint8_t red, uint8_t green, uint8_t blue) {
-  int major_panel = y / 16; // 32X32
-  int minor_panel = y/8 ; //8X32
-  int x_vertical_offset = ((minor_panel + 1) % 2) * 16; // Offset only for Odd panel numbers
-  int x_horizontal_offset = (x/16)*16;
-  int new_x = (x) + x_horizontal_offset + x_vertical_offset;
-  int y_offset = major_panel * 8;
-  int new_y = (y % 8) + y_offset;
- 	
+  int major_panel = (y/16) + 1; // 32X64
+  int minor_panel = (x/16) + 1; //8X16 width = 64 * actual_panels 
+  int total_minor_panels = this->width() / 16;
+  int x_vertical_offset = ( (y/8) % 2 ) * 64; // Offset only for Odd panel numbers
+  int x_horizontal_offset = (total_minor_panels - minor_panel) * 16;
+  int new_x = (15-x%16) + x_horizontal_offset + x_vertical_offset;
+  int y_offset = (major_panel % 2) * 8;
+  int new_y = (7 - y%8) + y_offset;
+ 
   printf("Transformed (%d, %d) to (%d, %d)\n", x,y , new_x, new_y);
-  /*
-	int new_x = x;
-	int new_y = y;
-	if (0 <= x < 16 && 0 <= y < 8) {
-		new_x = x+16;
-	}
-	if (16 <= x < 32 && 0 <= y < 8) {
-		new_x = x+16;
-	}
-	if (0 <= x < 16 && 8 <= y < 16) {
-		new_x = x-32;
-		new_y = y-8;
-	}
-	if (16 <= x < 32 && 8 <= y < 16) {
-		new_x = x+0;
-		new_y = y-8;
-	} */
-	delegatee_->SetPixel(new_x, new_y, red, green, blue);
+  delegatee_->SetPixel(new_x, new_y, red, green, blue);
 }
 
 MyNewTransformer::MyNewTransformer()
