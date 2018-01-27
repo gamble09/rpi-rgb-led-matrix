@@ -267,8 +267,9 @@ int MyNewTransformer::TransformCanvas::height() const {
 
 void MyNewTransformer::TransformCanvas::SetPixel(int x, int y, uint8_t red, uint8_t green, uint8_t blue) {
   int major_panel = (y/16) + 1; // 32X64
-  int x_vertical_offset = ( (y/8) % 2 ) * this->width(); // Offset only for Odd panel numbers
-  int new_x = (this->width() - 1 - x)  + x_vertical_offset;
+  int x_vertical_offset = ( (y/8) % 2 ) * 64; // Offset only for Odd panel numbers
+  int x_horizontal_offset = ( this->width()/64 - 1 - x/64 ) * 64;
+  int new_x = (this->width() - 1 - x)  + x_vertical_offset + x_horizontal_offset;
   int y_offset = (major_panel % 2) * 8;
   int new_y = (7 - y%8) + y_offset;
  
